@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: nginx-destinationrule
+spec:
+  host: nginx-service
+  subsets:
+    - name: green
+      labels:
+        version: green
+    - name: blue
+      labels:
+        version: blue
