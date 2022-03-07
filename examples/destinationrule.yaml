@@ -4,10 +4,16 @@ metadata:
   name: nginx-destinationrule
 spec:
   host: nginx-service
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
   subsets:
     - name: green
       labels:
         version: green
+      trafficPolicy:
+        loadBalancer:
+          simple: LEAST_CONN
     - name: blue
       labels:
         version: blue
