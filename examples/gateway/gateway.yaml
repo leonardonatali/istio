@@ -1,0 +1,56 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: ingress-gateway-k3s
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port: 
+        number: 80
+        name: http
+        protocol: http2
+      hosts:
+        - "*"
+  
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: nginx-virtualservice
+spec:
+    hosts:
+      - "*"
+    gateways:
+      - ingress-gateway-k3s
+    http:
+      - route:
+        - destination:
+            host: nginx-service
+            subset: green
+          weight: 60
+        - destination:
+            host: nginx-service
+            subset: blue
+          weight: 40
+  
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: nginx-destinationrule
+spec:
+  host: nginx-service
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+  subsets:
+    - name: green
+      labels:
+        version: green
+      trafficPolicy:
+        loadBalancer:
+          simple: LEAST_CONN
+    - name: blue
+      labels:
+        version: blue
