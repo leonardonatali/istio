@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: circuit-breaker-service
+spec:
+  selector:
+    app: circuit-breaker
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: circuit-breaker-deployment-bypass
+spec:
+  selector:
+    matchLabels:
+      app: circuit-breaker
+      version: bypass
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: circuit-breaker
+        version: bypass
+    spec:
+      containers:
+      - name: circuit-breaker
+        image: leonardonatali/circuitbreaker:latest
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "50m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: circuit-breaker-deployment-break
+spec:
+  selector:
+    matchLabels:
+      app: circuit-breaker
+      version: break
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: circuit-breaker
+        version: break
+    spec:
+      containers:
+      - name: circuit-breaker
+        image: leonardonatali/circuitbreaker:latest
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "50m"
+        ports:
+        - containerPort: 80
+        env:
+          - name: break
+            value: "true"
