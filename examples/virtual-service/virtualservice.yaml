@@ -1,17 +1,17 @@
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: nginx-virtualservice
+  name: echo-virtualservice
 spec:
     hosts:
-      - nginx-service
+      - echo-service
     http:
       - route:
         - destination:
-            host: nginx-service
-            subset: green
-          weight: 60
+            host: echo-service
+            subset: foo
+          weight: 90
         - destination:
-            host: nginx-service
-            subset: blue
-          weight: 40
+            host: echo-service
+            subset: bar
+          weight: 10

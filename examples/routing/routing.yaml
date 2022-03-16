@@ -17,7 +17,7 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: nginx-virtualservice
+  name: echo-virtualservice
 spec:
     hosts:
       - "*"
@@ -26,46 +26,46 @@ spec:
     http:
       - match:
         - uri:
-            prefix: "/blue"
+            prefix: "/bar"
         route:
           - destination:
-              host: nginx-service
-              subset: blue
+              host: echo-service
+              subset: bar
       - match:
         - uri:
             prefix: "/"
         route:
           - destination:
-              host: nginx-service
-              subset: green
+              host: echo-service
+              subset: foo
 
       - route:
         - destination:
-            host: nginx-service
-            subset: green
+            host: echo-service
+            subset: foo
           weight: 60
         - destination:
-            host: nginx-service
-            subset: blue
+            host: echo-service
+            subset: bar
           weight: 40
   
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
-  name: nginx-destinationrule
+  name: echo-destinationrule
 spec:
-  host: nginx-service
+  host: echo-service
   trafficPolicy:
     loadBalancer:
       simple: ROUND_ROBIN
   subsets:
-    - name: green
+    - name: foo
       labels:
-        version: green
+        version: foo
       trafficPolicy:
         loadBalancer:
           simple: LEAST_CONN
-    - name: blue
+    - name: bar
       labels:
-        version: blue
+        version: bar

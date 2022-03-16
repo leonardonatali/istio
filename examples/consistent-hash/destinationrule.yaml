@@ -1,9 +1,9 @@
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
-  name: nginx-destinationrule
+  name: echo-destinationrule
 spec:
-  host: nginx-service
+  host: echo-service
   trafficPolicy:
     loadBalancer:
       consistentHash:
@@ -11,4 +11,4 @@ spec:
   subsets:
     - name: all
       labels:
-        app: nginx
+        app: echo
